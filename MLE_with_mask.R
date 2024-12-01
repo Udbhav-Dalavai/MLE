@@ -129,39 +129,3 @@ likelihood_ari <- adjustedRandIndex(block_assignments, clustering_likelihood)
 
 cat("ASE ARI:", ase_ari, "\n")
 cat("Likelihood-Based ARI:", likelihood_ari, "\n")
-
-
-
-
-analyze_missing_corrupted <- function(A_true, A_noisy, X, W, g = function(x) 1 / (1 + exp(-x))) {
-  # Reconstruct adjacency matrix
-  A_hat <- g(X %*% t(X))
-  
-  # Identify missing values
-  missing_mask <- (A_true == 1 & A_noisy == 0)
-  missing_values <- which(missing_mask, arr.ind = TRUE)
-  
-  # Identify corrupted values
-  false_positives <- which((A_true == 0 & A_noisy == 1), arr.ind = TRUE)
-  false_negatives <- which((A_true == 1 & A_noisy == 0), arr.ind = TRUE)
-  
-  # Analyze recovery for missing values
-  missing_recovery <- mean(round(A_hat[missing_values]) == A_true[missing_values])
-  
-  # Analyze recovery for corrupted values
-  false_positive_recovery <- mean(round(A_hat[false_positives]) == A_true[false_positives])
-  false_negative_recovery <- mean(round(A_hat[false_negatives]) == A_true[false_negatives])
-  
-  # Return results
-  list(
-    missing_recovery = missing_recovery,
-    false_positive_recovery = false_positive_recovery,
-    false_negative_recovery = false_negative_recovery
-  )
-}
-
-# Example usage
-results <- analyze_missing_corrupted(A_true = A, A_noisy = A_noisy, X = X_likelihood, W = W_likelihood)
-cat("Recovery of missing values:", results$missing_recovery, "\n")
-cat("Recovery of false positives:", results$false_positive_recovery, "\n")
-cat("Recovery of false negatives:", results$false_negative_recovery, "\n")
