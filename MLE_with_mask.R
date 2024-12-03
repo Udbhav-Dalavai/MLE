@@ -33,7 +33,7 @@ optimize_likelihood <- function(A, d, g = function(x) 1 / (1 + exp(-x)),
   n <- nrow(A)
   
   #Initialize M as a mask and low-rank approximation (Y = WX)
-  M <- ifelse(A == 0, 0, 0.5) * (1 - diag(1, n))
+  M <- ifelse(A == 0, 0, 1) * (1 - diag(1, n))
   
   W <- matrix(rnorm(d * d, mean = 0, sd = 0.01), d, d) 
   
